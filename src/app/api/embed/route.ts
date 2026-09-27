@@ -4,6 +4,8 @@ import { decodeTarget, isPublicHttpUrl, verifyTarget } from "@/lib/stream-url";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Serverless platforms cut idle functions off early; video segments need room.
+export const maxDuration = 60;
 
 /**
  * Re-frames a third-party player page.

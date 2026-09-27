@@ -33,9 +33,17 @@ export const BROWSER_UA =
   process.env.UPSTREAM_UA ||
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36";
 
-/** Secret used to sign proxy URLs so /api/stream can't be abused as an open proxy. */
+/**
+ * Secret used to sign proxy URLs so /api/stream can't be abused as an open
+ * proxy. On Vercel we fall back to a value that is stable for the whole
+ * deployment (so every serverless instance signs identically) but different
+ * for every deploy — that keeps a zero-config deployment safe.
+ */
 export const STREAM_SECRET =
-  process.env.STREAM_SECRET || "sanime-default-stream-secret-change-me";
+  process.env.STREAM_SECRET ||
+  process.env.VERCEL_DEPLOYMENT_ID ||
+  process.env.VERCEL_GIT_COMMIT_SHA ||
+  "sanime-default-stream-secret-change-me";
 
 /**
  * "on"   – always route video through our proxy (most reliable, uses bandwidth)
@@ -47,15 +55,41 @@ export const STREAM_PROXY_MODE = (process.env.STREAM_PROXY || "auto") as
   | "auto"
   | "off";
 
+/**
+ * Optional external relay (e.g. a free Cloudflare Worker) that speaks the same
+ * signed protocol as /api/stream. Set it to move video bandwidth off your
+ * hosting plan — leave empty to relay through this app itself.
+ */
+export const STREAM_RELAY_ORIGIN = (process.env.NEXT_PUBLIC_STREAM_RELAY || "").replace(
+  /\/+$/,
+  ""
+);
+
 /** Dev escape hatch: allow proxying localhost/private targets (mock upstream). */
 export const ALLOW_PRIVATE_TARGETS = process.env.ALLOW_PRIVATE_TARGETS === "1";
 
 /** Set STREAM_PROBE=0 to skip the server-side "is this source alive?" checks. */
 export const PROBE_SOURCES = process.env.STREAM_PROBE !== "0";
 
-export const SITE_URL = clean(
-  process.env.NEXT_PUBLIC_SITE_URL || "https://sanime.app"
-);
+/**
+ * Public origin of this deployment. Explicit config wins; otherwise we use the
+ * Vercel-provided domains, so the first deploy already has correct metadata,
+ * sitemap and CORS probing without touching any settings.
+ */
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return clean(explicit);
+
+  const production = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (production) return `https://${clean(production)}`;
+
+  const preview = process.env.VERCEL_URL;
+  if (preview) return `https://${clean(preview)}`;
+
+  return "http://localhost:3000";
+}
+
+export const SITE_URL = resolveSiteUrl();
 
 export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || "Sanime";
 

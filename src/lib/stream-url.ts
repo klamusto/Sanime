@@ -1,5 +1,9 @@
 import { createHmac, timingSafeEqual } from "crypto";
-import { ALLOW_PRIVATE_TARGETS, STREAM_SECRET } from "./config";
+import {
+  ALLOW_PRIVATE_TARGETS,
+  STREAM_RELAY_ORIGIN,
+  STREAM_SECRET,
+} from "./config";
 
 /**
  * Signed URLs for the media proxy.
@@ -34,11 +38,14 @@ export function verifyTarget(url: string, signature: string): boolean {
   }
 }
 
-/** Build the same-origin URL the player should request. */
+/**
+ * URL the player should request: same-origin by default, or the external relay
+ * when one is configured (identical protocol, so playlists stay valid).
+ */
 export function proxiedMediaUrl(target: string): string {
   const u = encodeTarget(target);
   const s = signTarget(target);
-  return `/api/stream?u=${u}&s=${s}`;
+  return `${STREAM_RELAY_ORIGIN}/api/stream?u=${u}&s=${s}`;
 }
 
 /** Build the same-origin URL that re-frames a third-party embed page. */

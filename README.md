@@ -63,6 +63,21 @@ https://pub-497efadc5af745bfa313edcd382f0cd5.r2.dev/hls/<uuid>/master.m3u8
 
 ---
 
+## النشر على Vercel
+
+```bash
+npm run deploy      # يسجّل الدخول، يربط المشروع، يولّد المفتاح السري، وينشر
+```
+
+أو من المتصفح: <https://vercel.com/new> → استورد المستودع → أضف `STREAM_SECRET`
+→ Deploy.
+
+الدليل الكامل (المتغيرات، فحوصات ما بعد النشر، النطاق الترددي، حل المشاكل) في
+[`DEPLOY.md`](./DEPLOY.md)، والوسيط المجاني الاختياري على Cloudflare في
+[`workers/stream-relay/`](./workers/stream-relay/README.md).
+
+---
+
 ## التشغيل محلياً
 
 ```bash
@@ -80,7 +95,8 @@ npm run dev
 | `STREAM_SECRET` | قيمة افتراضية | توقيع روابط الوسيط — **غيّرها في الإنتاج** |
 | `STREAM_PROXY` | `auto` | `on` = كل البث عبر خادمك، `off` = بدون وسيط |
 | `STREAM_PROBE` | `1` | فحص السيرفرات قبل عرضها |
-| `NEXT_PUBLIC_SITE_URL` | `https://sanime.app` | نطاق الموقع (SEO + الفحص) |
+| `NEXT_PUBLIC_SITE_URL` | نطاق Vercel تلقائياً | نطاق الموقع (SEO + الفحص) |
+| `NEXT_PUBLIC_STREAM_RELAY` | فارغ | وسيط بث خارجي (Cloudflare Worker) بدل خادمك |
 
 > ملاحظة عن الاستضافة: الوسيط يمرّر الفيديو عبر خادمك، لذا لو كنت على خطة ذات
 > حد نطاق ترددي منخفض اجعل `STREAM_PROXY=auto` (الوضع الافتراضي) حتى لا يُستخدم
@@ -112,4 +128,5 @@ npm run build      # بناء الإنتاج
 npm run start      # تشغيل الإنتاج
 npm run lint       # ESLint
 npm run typecheck  # TypeScript
+npm run deploy     # نشر على Vercel (تفاعلي)
 ```

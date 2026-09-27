@@ -9,6 +9,8 @@ import {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Serverless platforms cut idle functions off early; video segments need room.
+export const maxDuration = 60;
 
 /**
  * Media relay.
