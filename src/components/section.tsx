@@ -14,19 +14,18 @@ export default function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="mt-10 first:mt-0">
+    <section className="mt-12 first:mt-0">
       <div className="mb-5 flex items-center justify-between gap-4">
         <h2 className="flex items-center gap-2.5 text-lg font-bold text-white sm:text-xl">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-primary/25 to-accent/25 text-primary-soft ring-1 ring-primary/25">
-            {icon}
-          </span>
+          {icon && (
+            <span className="glass grid h-9 w-9 place-items-center rounded-2xl text-white">
+              {icon}
+            </span>
+          )}
           {title}
         </h2>
         {href && (
-          <Link
-            href={href}
-            className="group flex items-center gap-1.5 rounded-lg border border-edge px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-primary/50 hover:text-primary-soft"
-          >
+          <Link href={href} className="btn btn-sm group">
             عرض الكل
             <ArrowLeft className="h-3.5 w-3.5 transition group-hover:-translate-x-0.5" />
           </Link>

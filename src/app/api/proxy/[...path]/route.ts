@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
+import { API_BASE, upstreamHeaders } from "@/lib/config";
 
-const UPSTREAM = "https://api.animetom.live/api";
+const UPSTREAM = API_BASE;
 const TIMEOUT = 15_000;
 
 /**
@@ -19,10 +20,7 @@ export async function GET(
     const res = await fetch(target, {
       cache: "no-store",
       signal: AbortSignal.timeout(TIMEOUT),
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "Sanime/1.0 (web viewer)",
-      },
+      headers: upstreamHeaders({ accept: "application/json" }),
     });
 
     if (!res.ok) {

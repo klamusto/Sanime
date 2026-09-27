@@ -86,7 +86,7 @@ export default async function AnimePage({ params }: Props) {
   return (
     <div>
       {/* Banner */}
-      <div className="relative overflow-hidden border-b border-edge">
+      <div className="relative overflow-hidden border-b border-white/8">
         <div className="absolute inset-0">
           <Image
             src={banner}
@@ -94,14 +94,14 @@ export default async function AnimePage({ params }: Props) {
             fill
             priority
             sizes="100vw"
-            className="scale-110 object-cover object-top opacity-30 blur-md"
+            className="scale-110 object-cover object-top opacity-25 grayscale blur-md"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/85 to-bg/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-black/50" />
         </div>
 
         <div className="relative mx-auto flex max-w-7xl flex-col gap-8 px-4 pb-10 pt-10 sm:px-6 md:flex-row md:items-end">
           {/* Poster */}
-          <div className="relative h-72 w-52 shrink-0 self-center overflow-hidden rounded-2xl border border-white/15 shadow-2xl shadow-black/70 md:self-auto">
+          <div className="relative h-72 w-52 shrink-0 self-center overflow-hidden rounded-3xl border border-white/15 shadow-[0_30px_80px_-30px_rgba(0,0,0,1)] md:self-auto">
             <Image
               src={cover}
               alt={title}
@@ -111,8 +111,8 @@ export default async function AnimePage({ params }: Props) {
               className="object-cover"
             />
             {anime.rating > 0 && (
-              <span className="absolute start-2 top-2 flex items-center gap-1 rounded-lg bg-black/70 px-2 py-1 text-xs font-bold text-amber-300 backdrop-blur">
-                <Star className="h-3.5 w-3.5 fill-amber-300" />
+              <span className="chip absolute start-2 top-2">
+                <Star className="h-3.5 w-3.5 fill-white" strokeWidth={0} />
                 {toArabicDigits(anime.rating)}
               </span>
             )}
@@ -121,22 +121,12 @@ export default async function AnimePage({ params }: Props) {
           {/* Info */}
           <div className="min-w-0 flex-1 animate-fade-up">
             <div className="mb-3 flex flex-wrap items-center gap-2">
-              <span
-                className={`rounded-md px-2.5 py-1 text-xs font-bold ${
-                  ongoing
-                    ? "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-400/30"
-                    : "bg-primary/15 text-primary-soft ring-1 ring-primary/30"
-                }`}
-              >
+              <span className={`chip ${ongoing ? "chip-active" : ""}`}>
                 {statusLabel(anime.status)}
               </span>
-              <span className="rounded-md bg-white/8 px-2.5 py-1 text-xs font-medium text-slate-300 ring-1 ring-white/10">
-                {typeLabel(anime.type) || "أنمي"}
-              </span>
+              <span className="chip">{typeLabel(anime.type) || "أنمي"}</span>
               {anime.ageRating?.label && (
-                <span className="rounded-md bg-amber-400/10 px-2.5 py-1 text-xs font-medium text-amber-300 ring-1 ring-amber-400/20">
-                  {anime.ageRating.label}
-                </span>
+                <span className="chip">{anime.ageRating.label}</span>
               )}
             </div>
 
@@ -144,37 +134,37 @@ export default async function AnimePage({ params }: Props) {
               {title}
             </h1>
             {anime.titleEnglish && anime.titleEnglish !== anime.title && (
-              <p className="mt-1.5 text-sm text-slate-400" dir="ltr">
+              <p className="mt-1.5 text-sm text-white/45" dir="ltr">
                 {anime.titleEnglish}
               </p>
             )}
 
-            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-400">
+            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/50">
               {anime.year && (
                 <span className="flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-primary-soft" />
+                  <CalendarDays className="h-4 w-4 text-white/40" />
                   {toArabicDigits(anime.year)}
                 </span>
               )}
               <span className="flex items-center gap-1.5">
-                <ListVideo className="h-4 w-4 text-primary-soft" />
+                <ListVideo className="h-4 w-4 text-white/40" />
                 {toArabicDigits(published)} حلقة
               </span>
               {anime.episodeDuration && (
                 <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-primary-soft" />
+                  <Clock className="h-4 w-4 text-white/40" />
                   {anime.episodeDuration}
                 </span>
               )}
               {anime.studio && (
                 <span className="flex items-center gap-1.5">
-                  <Building2 className="h-4 w-4 text-primary-soft" />
+                  <Building2 className="h-4 w-4 text-white/40" />
                   {anime.studio}
                 </span>
               )}
               {anime.author && (
                 <span className="flex items-center gap-1.5">
-                  <Award className="h-4 w-4 text-primary-soft" />
+                  <Award className="h-4 w-4 text-white/40" />
                   {anime.author}
                 </span>
               )}
@@ -186,7 +176,7 @@ export default async function AnimePage({ params }: Props) {
                   <Link
                     key={g}
                     href={`/anime?genres=${encodeURIComponent(g)}`}
-                    className="rounded-full border border-edge bg-surface/70 px-3 py-1 text-[11px] text-slate-300 transition hover:border-primary/50 hover:text-primary-soft"
+                    className="chip hover:bg-white/14"
                   >
                     {g}
                   </Link>
@@ -195,7 +185,7 @@ export default async function AnimePage({ params }: Props) {
             )}
 
             {anime.description && (
-              <p className="mt-4 max-w-3xl whitespace-pre-line text-sm leading-8 text-slate-300">
+              <p className="mt-4 max-w-3xl whitespace-pre-line text-sm leading-8 text-white/65">
                 {anime.description}
               </p>
             )}
@@ -203,9 +193,9 @@ export default async function AnimePage({ params }: Props) {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Link
                 href={watchHref}
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-l from-primary to-accent px-7 py-3 text-sm font-bold text-white shadow-xl shadow-primary/35 transition hover:brightness-110"
+                className="btn btn-lg btn-solid btn-sheen"
               >
-                <Play className="h-4.5 w-4.5 fill-white" />
+                <Play className="h-4 w-4 fill-black" strokeWidth={0} />
                 {published > 0
                   ? `شاهد الحلقة ${toArabicDigits(lastEp || 1)}`
                   : "قريباً"}
@@ -216,7 +206,7 @@ export default async function AnimePage({ params }: Props) {
                   href={anime.malUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 rounded-xl border border-edge bg-surface/70 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-primary/50 hover:text-white"
+                  className="btn"
                 >
                   MyAnimeList ↗
                 </a>
@@ -228,9 +218,9 @@ export default async function AnimePage({ params }: Props) {
 
       <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
         {/* Episodes */}
-        <div className="mt-10 rounded-3xl border border-edge bg-surface/60 p-5 sm:p-7">
+        <div className="glass-panel mt-10 p-5 sm:p-7">
           <h2 className="mb-5 flex items-center gap-2.5 text-lg font-bold text-white">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-primary/25 to-accent/25 text-primary-soft ring-1 ring-primary/25">
+            <span className="glass grid h-9 w-9 place-items-center rounded-2xl">
               <ListVideo className="h-4 w-4" />
             </span>
             الحلقات
@@ -245,7 +235,7 @@ export default async function AnimePage({ params }: Props) {
               {external.characters.slice(0, 20).map((c) => (
                 <div
                   key={c.id}
-                  className="w-28 shrink-0 overflow-hidden rounded-2xl border border-edge bg-card"
+                  className="w-28 shrink-0 overflow-hidden rounded-2xl border border-white/8 bg-white/[0.035]"
                 >
                   <div className="relative aspect-[3/4]">
                     {c.image ? (
@@ -257,12 +247,12 @@ export default async function AnimePage({ params }: Props) {
                         className="object-cover"
                       />
                     ) : (
-                      <div className="grid h-full w-full place-items-center text-slate-600">
+                      <div className="grid h-full w-full place-items-center text-white/25">
                         ?
                       </div>
                     )}
                   </div>
-                  <p className="truncate p-2 text-center text-xs font-medium text-slate-300">
+                  <p className="truncate p-2 text-center text-xs font-medium text-white/70">
                     {c.name}
                   </p>
                 </div>

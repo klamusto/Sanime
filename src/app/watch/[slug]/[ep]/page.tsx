@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { CalendarDays, ListVideo, Play, Star } from "lucide-react";
+import { CalendarDays, ListVideo, Star } from "lucide-react";
 import { getAnime, getEpisode, getEpisodeMeta } from "@/lib/animetom";
+import { normalizeServers, resolveServers } from "@/lib/servers";
 import {
   displayTitle,
   optimizeImage,
@@ -58,6 +59,10 @@ export default async function WatchPage({ params }: Props) {
     notFound();
   }
 
+  // Clean the messy upstream server list, then health-check every source so the
+  // player only offers links that can actually play from our domain.
+  const servers = await resolveServers(episode._id, normalizeServers(episode));
+
   let episodes: Awaited<ReturnType<typeof getEpisodeMeta>> = [];
   try {
     episodes = await getEpisodeMeta(slug);
@@ -67,30 +72,44 @@ export default async function WatchPage({ params }: Props) {
 
   const title = displayTitle(anime);
   const cover = optimizeImage(anime.r2CoverImage || anime.coverImage, 400);
+  const ongoing = (anime.status || "").toLowerCase() === "ongoing";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         {/* main column */}
         <div className="min-w-0">
           <Player
             slug={slug}
             epNumber={num}
-            episode={episode}
+            episode={{
+              title: episode.title,
+              isFiller: episode.isFiller,
+              views: episode.views,
+              downloadLinks: episode.downloadLinks,
+            }}
             anime={{
               slug,
               title: anime.title,
               titleArabic: anime.titleArabic,
               coverImage: anime.r2CoverImage || anime.coverImage,
+              poster: optimizeImage(
+                anime.r2BannerImage ||
+                  anime.bannerImage ||
+                  anime.r2CoverImage ||
+                  anime.coverImage,
+                1280
+              ),
             }}
             episodes={episodes}
+            servers={servers}
           />
 
           {/* anime info strip */}
-          <div className="mt-5 flex gap-4 rounded-2xl border border-edge bg-surface/70 p-4">
+          <div className="glass-panel mt-6 flex gap-4 p-4">
             <Link
               href={`/anime/${slug}`}
-              className="relative h-28 w-20 shrink-0 overflow-hidden rounded-xl border border-edge"
+              className="relative h-28 w-20 shrink-0 overflow-hidden rounded-2xl border border-white/10"
             >
               <Image
                 src={cover}
@@ -103,40 +122,34 @@ export default async function WatchPage({ params }: Props) {
             <div className="min-w-0 flex-1">
               <Link
                 href={`/anime/${slug}`}
-                className="line-clamp-1 text-base font-bold text-white transition hover:text-primary-soft"
+                className="line-clamp-1 text-base font-bold text-white transition hover:text-white/70"
               >
                 {title}
               </Link>
-              <p className="mt-1 text-sm font-medium text-primary-soft">
+              <p className="mt-1 text-sm font-medium text-white/55">
                 {episode.title || `الحلقة ${toArabicDigits(num)}`}
               </p>
-              <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-white/50">
                 {anime.year && (
-                  <span className="flex items-center gap-1">
-                    <CalendarDays className="h-3.5 w-3.5" />
+                  <span className="chip">
+                    <CalendarDays className="h-3 w-3" />
                     {toArabicDigits(anime.year)}
                   </span>
                 )}
                 {anime.rating > 0 && (
-                  <span className="flex items-center gap-1 text-amber-300">
-                    <Star className="h-3.5 w-3.5 fill-amber-300" />
+                  <span className="chip">
+                    <Star className="h-3 w-3 fill-white" strokeWidth={0} />
                     {toArabicDigits(anime.rating)}
                   </span>
                 )}
-                <span
-                  className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
-                    (anime.status || "").toLowerCase() === "ongoing"
-                      ? "bg-emerald-500/15 text-emerald-300"
-                      : "bg-primary/15 text-primary-soft"
-                  }`}
-                >
+                <span className={`chip ${ongoing ? "chip-active" : ""}`}>
                   {statusLabel(anime.status)}
                 </span>
                 {anime.genres.slice(0, 3).map((g) => (
                   <Link
                     key={g}
                     href={`/anime?genres=${encodeURIComponent(g)}`}
-                    className="rounded-full border border-edge px-2 py-0.5 transition hover:border-primary/50 hover:text-primary-soft"
+                    className="chip hover:bg-white/15"
                   >
                     {g}
                   </Link>
@@ -145,7 +158,7 @@ export default async function WatchPage({ params }: Props) {
             </div>
             <Link
               href={`/anime/${slug}`}
-              className="hidden shrink-0 items-center gap-2 self-center rounded-xl border border-edge px-4 py-2.5 text-xs font-semibold text-slate-300 transition hover:border-primary/50 hover:text-white sm:flex"
+              className="btn btn-sm hidden shrink-0 self-center sm:inline-flex"
             >
               <ListVideo className="h-4 w-4" />
               صفحة الأنمي
@@ -161,5 +174,3 @@ export default async function WatchPage({ params }: Props) {
     </div>
   );
 }
-
-

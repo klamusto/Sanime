@@ -69,6 +69,8 @@ export interface LatestEpisode {
 
 export interface EpisodeServer {
   name: string;
+  /** Upstream sometimes labels the link with `text` instead of `name`. */
+  text?: string;
   embedUrl?: string;
   url?: string;
   priority?: number;
@@ -91,7 +93,7 @@ export interface Episode {
   isPinned?: boolean;
   isFiller?: boolean;
   downloadCount?: number;
-  downloadLinks?: { name: string; url: string; quality?: string }[];
+  downloadLinks?: { name?: string; text?: string; url: string; quality?: string }[];
   createdAt?: string;
   updatedAt?: string;
 }

@@ -56,19 +56,19 @@ export default async function CatalogView({
         <div>
           <h1 className="flex items-center gap-3 text-2xl font-bold text-white sm:text-3xl">
             {icon && (
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary/25 to-accent/25 text-primary-soft ring-1 ring-primary/25">
+              <span className="glass grid h-11 w-11 place-items-center rounded-2xl text-white">
                 {icon}
               </span>
             )}
             {title ?? "قائمة الأنمي"}
             {q && (
-              <span className="text-gradient text-xl font-bold sm:text-2xl">
+              <span className="text-white/45 text-xl font-bold sm:text-2xl">
                 «{q}»
               </span>
             )}
           </h1>
           {result && (
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-white/40">
               {toArabicDigits(total)} نتيجة
               {result.pagination?.totalPages > 1 &&
                 ` · ${toArabicDigits(result.pagination.totalPages)} صفحة`}
@@ -83,22 +83,22 @@ export default async function CatalogView({
 
       <div className="mt-6">
         {!result ? (
-          <div className="grid place-items-center gap-3 rounded-3xl border border-edge bg-card py-20 text-center">
-            <span className="grid h-14 w-14 place-items-center rounded-2xl bg-red-400/10 text-red-300">
+          <div className="glass-panel grid place-items-center gap-3 py-20 text-center">
+            <span className="glass grid h-14 w-14 place-items-center rounded-2xl text-white/70">
               <SearchX className="h-7 w-7" />
             </span>
-            <p className="font-semibold text-slate-200">تعذّر جلب النتائج</p>
-            <p className="text-sm text-slate-500">
+            <p className="font-semibold text-white/85">تعذّر جلب النتائج</p>
+            <p className="text-sm text-white/40">
               حدث خطأ أثناء الاتصال بالمصدر، جرّب تحديث الصفحة بعد قليل.
             </p>
           </div>
         ) : result.data.length === 0 ? (
-          <div className="grid place-items-center gap-3 rounded-3xl border border-edge bg-card py-20 text-center">
-            <span className="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-primary-soft">
+          <div className="glass-panel grid place-items-center gap-3 py-20 text-center">
+            <span className="glass grid h-14 w-14 place-items-center rounded-2xl text-white/70">
               <SearchX className="h-7 w-7" />
             </span>
-            <p className="font-semibold text-slate-200">لا توجد نتائج مطابقة</p>
-            <p className="text-sm text-slate-500">
+            <p className="font-semibold text-white/85">لا توجد نتائج مطابقة</p>
+            <p className="text-sm text-white/40">
               جرّب تعديل الفلاتر أو البحث بكلمات أخرى.
             </p>
           </div>
@@ -123,8 +123,8 @@ export default async function CatalogView({
 export function CatalogLoading() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="skeleton mb-6 h-9 w-56 rounded-xl" />
-      <div className="skeleton mb-6 h-24 w-full rounded-2xl" />
+      <div className="skeleton mb-6 h-9 w-56 rounded-full" />
+      <div className="skeleton mb-6 h-24 w-full rounded-3xl" />
       <GridSkeleton count={12} />
     </div>
   );

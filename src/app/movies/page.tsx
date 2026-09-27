@@ -48,7 +48,7 @@ export default async function MoviesPage({ searchParams }: Props) {
       />
       {spotlight && spotlight.data.length > 0 && (
         <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
-          <p className="mb-4 text-sm font-semibold text-slate-400">
+          <p className="mb-4 text-sm font-semibold text-white/55">
             ★ أعلى الأفلام تقييماً على سانيمي
           </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -56,12 +56,12 @@ export default async function MoviesPage({ searchParams }: Props) {
               <a
                 key={m._id}
                 href={`/anime/${m.slug}`}
-                className="group flex items-center gap-2.5 rounded-xl border border-edge bg-card p-2.5 transition hover:border-primary/50"
+                className="group flex items-center gap-2.5 rounded-2xl border border-white/8 bg-white/[0.035] p-2.5 transition hover:border-white/25 hover:bg-white/[0.07]"
               >
-                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-amber-400/20 to-amber-600/20 text-xs font-bold text-amber-300">
+                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-xl bg-white/10 text-xs font-bold text-white/70">
                   ★
                 </span>
-                <span className="line-clamp-2 text-xs font-medium text-slate-300 transition group-hover:text-white">
+                <span className="line-clamp-2 text-xs font-medium text-white/65 transition group-hover:text-white">
                   {m.titleArabic || m.title}
                 </span>
               </a>

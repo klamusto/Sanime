@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Play } from "lucide-react";
+import { ArrowDownUp, Play } from "lucide-react";
 import type { EpisodeMeta } from "@/lib/types";
 import { toArabicDigits } from "@/lib/format";
 
@@ -25,11 +25,10 @@ export default function EpisodeGrid({
   }, [episodes, newestFirst]);
 
   const visible = ordered.slice(0, limit);
-  const watched = new Set<string>(); // can be extended with localStorage later
 
   if (episodes.length === 0) {
     return (
-      <p className="rounded-2xl border border-edge bg-card p-8 text-center text-sm text-slate-500">
+      <p className="glass-panel p-8 text-center text-sm text-white/45">
         لا توجد حلقات منشورة حتى الآن.
       </p>
     );
@@ -38,7 +37,7 @@ export default function EpisodeGrid({
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-white/50">
           {toArabicDigits(episodes.length)} حلقة
           {episodes.some((e) => e.isFiller) && " · يتضمن حلقات فيلر"}
         </p>
@@ -47,42 +46,36 @@ export default function EpisodeGrid({
             setNewestFirst((v) => !v);
             setLimit(CHUNK);
           }}
-          className="rounded-lg border border-edge px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-primary/50 hover:text-white"
+          className="btn btn-sm"
         >
-          {newestFirst ? "↓ الأحدث أولاً" : "↑ الأقدم أولاً"}
+          <ArrowDownUp className="h-3.5 w-3.5" />
+          {newestFirst ? "الأحدث أولاً" : "الأقدم أولاً"}
         </button>
       </div>
 
       <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10">
-        {visible.map((ep) => {
-          const isWatched = watched.has(ep._id);
-          return (
-            <Link
-              key={ep._id}
-              href={`/watch/${slug}/${ep.number}`}
-              className={`group relative flex h-11 items-center justify-center rounded-xl border text-sm font-semibold transition ${
-                isWatched
-                  ? "border-primary/40 bg-primary/15 text-primary-soft"
-                  : "border-edge bg-card text-slate-200 hover:border-primary/60 hover:bg-primary/10 hover:text-white"
-              }`}
-              title={ep.title}
-            >
-              {toArabicDigits(ep.number)}
-              {ep.isFiller && (
-                <span className="absolute end-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-amber-400" />
-              )}
-              <span className="pointer-events-none absolute inset-0 grid place-items-center rounded-xl bg-primary/80 opacity-0 transition group-hover:opacity-100">
-                <Play className="h-3.5 w-3.5 fill-white text-white" strokeWidth={0} />
-              </span>
-            </Link>
-          );
-        })}
+        {visible.map((ep) => (
+          <Link
+            key={ep._id}
+            href={`/watch/${slug}/${ep.number}`}
+            className="group relative flex h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-sm font-semibold text-white/80 transition hover:border-white/40 hover:bg-white hover:text-black"
+            title={ep.title}
+          >
+            {toArabicDigits(ep.number)}
+            {ep.isFiller && (
+              <span className="absolute end-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-white/50 group-hover:bg-black/40" />
+            )}
+            <span className="pointer-events-none absolute inset-0 grid place-items-center rounded-2xl opacity-0 transition group-hover:opacity-100">
+              <Play className="h-3.5 w-3.5 fill-black text-black" strokeWidth={0} />
+            </span>
+          </Link>
+        ))}
       </div>
 
       {visible.length < ordered.length && (
         <button
           onClick={() => setLimit((l) => l + CHUNK)}
-          className="mx-auto mt-5 block rounded-xl border border-edge bg-card px-8 py-2.5 text-sm font-medium text-slate-300 transition hover:border-primary/50 hover:text-white"
+          className="btn mx-auto mt-5 block"
         >
           عرض المزيد ({toArabicDigits(ordered.length - visible.length)} متبقية)
         </button>
