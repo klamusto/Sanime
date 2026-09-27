@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getAnimeList } from "@/lib/animetom";
+import { SITE_URL } from "@/lib/config";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = "https://sanime.example.com";
+  const base = SITE_URL;
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: base, changeFrequency: "hourly", priority: 1 },
     { url: `${base}/anime`, changeFrequency: "hourly", priority: 0.9 },

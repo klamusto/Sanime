@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { API_BASE, upstreamHeaders } from "./config";
 import type {
   Anime,
   ApiList,
@@ -15,8 +16,9 @@ import type {
  * Every call is cached (ISR-style) so the site behaves like it owns the data.
  */
 
-const BASE_URL = "https://api.animetom.live/api";
+const BASE_URL = API_BASE;
 const TIMEOUT = 15_000;
+const RETRIES = 2;
 
 const REVALIDATE = {
   list: 300, // 5 minutes
@@ -29,23 +31,44 @@ type Json = Record<string, unknown>;
 
 async function fetchJson(path: string, _revalidate: number): Promise<Json> {
   const url = `${BASE_URL}${path}`;
-  const res = await fetch(url, {
-    cache: "no-store",
-    signal: AbortSignal.timeout(TIMEOUT),
-    headers: {
-      Accept: "application/json",
-      "User-Agent": "Sanime/1.0 (web viewer)",
-    },
-  });
+  let lastError: unknown;
 
-  if (!res.ok) {
-    throw new Error(`Upstream ${res.status} for ${path}`);
+  // The upstream API occasionally cold-starts; a single retry hides most of it.
+  for (let attempt = 0; attempt <= RETRIES; attempt++) {
+    try {
+      const res = await fetch(url, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(TIMEOUT),
+        headers: upstreamHeaders({ accept: "application/json" }),
+      });
+
+      if (res.status >= 500 || res.status === 429) {
+        throw new Error(`Upstream ${res.status} for ${path}`);
+      }
+      if (!res.ok) {
+        // 4xx answers are deterministic — no point retrying.
+        throw Object.assign(new Error(`Upstream ${res.status} for ${path}`), {
+          fatal: true,
+        });
+      }
+      const json = (await res.json()) as Json;
+      if (json.success === false) {
+        throw Object.assign(
+          new Error((json.message as string) || "Upstream error"),
+          { fatal: true }
+        );
+      }
+      return json;
+    } catch (error) {
+      lastError = error;
+      if ((error as { fatal?: boolean })?.fatal) break;
+      if (attempt < RETRIES) {
+        await new Promise((r) => setTimeout(r, 350 * (attempt + 1)));
+      }
+    }
   }
-  const json = (await res.json()) as Json;
-  if (json.success === false) {
-    throw new Error((json.message as string) || "Upstream error");
-  }
-  return json;
+
+  throw lastError instanceof Error ? lastError : new Error("Upstream failure");
 }
 
 /**
@@ -197,7 +220,7 @@ export async function getEpisode(
   const episode = (epJson.data as Episode) || null;
   const animeData = animeJson.data as { anime?: Anime };
   if (!episode || !animeData?.anime) throw new Error("episode-not-found");
-  return { episode, anime: animeData.anime };
+  return { episode: normalizeEpisode(episode), anime: animeData.anime };
 }
 
 export async function getEpisodeCount(slug: string): Promise<number> {
@@ -212,6 +235,22 @@ export async function getEpisodeCount(slug: string): Promise<number> {
 }
 
 /* ------------------------------------------------------------------ */
+
+/**
+ * Upstream is inconsistent about download link shape (`text` vs `name`) and
+ * happily returns entries with no URL at all. Clean that up once, here.
+ */
+function normalizeEpisode(episode: Episode): Episode {
+  const links = (episode.downloadLinks ?? [])
+    .map((d) => ({
+      name: (d.name || d.text || "تحميل").trim(),
+      url: (d.url || "").trim(),
+      quality: d.quality,
+    }))
+    .filter((d) => /^https?:\/\//i.test(d.url));
+
+  return { ...episode, downloadLinks: links };
+}
 
 export function emptyPagination() {
   return {

@@ -31,13 +31,13 @@ export default async function LatestPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="mb-6 flex items-center gap-3">
-        <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary/25 to-accent/25 text-primary-soft ring-1 ring-primary/25">
+        <span className="glass grid h-11 w-11 place-items-center rounded-2xl text-white">
           <Clock3 className="h-5 w-5" />
         </span>
         <div>
           <h1 className="text-2xl font-bold text-white sm:text-3xl">آخر الحلقات</h1>
           {result && (
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-white/40">
               {toArabicDigits(result.pagination.totalResults ?? result.data.length)}{" "}
               حلقة مترجمة · تحديث مستمر
             </p>
@@ -46,7 +46,7 @@ export default async function LatestPage({ searchParams }: Props) {
       </div>
 
       {!result ? (
-        <p className="rounded-2xl border border-edge bg-card p-10 text-center text-sm text-slate-500">
+        <p className="glass-panel p-10 text-center text-sm text-white/45">
           تعذّر تحميل الحلقات حالياً، حاول مجدداً بعد قليل.
         </p>
       ) : (

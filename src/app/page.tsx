@@ -13,6 +13,7 @@ import {
   getLatestEpisodes,
   getSeasonal,
 } from "@/lib/animetom";
+import Link from "next/link";
 import Hero from "@/components/hero";
 import Section from "@/components/section";
 import AnimeCard from "@/components/anime-card";
@@ -46,12 +47,7 @@ export default async function HomePage() {
         <Hero items={featuredItems} />
       </div>
 
-      <Section
-        title="تابع مشاهدتك"
-        icon={<Play className="h-4 w-4" />}
-      >
-        <ContinueWatching />
-      </Section>
+      <ContinueWatching />
 
       <Section
         title="آخر الحلقات"
@@ -65,7 +61,7 @@ export default async function HomePage() {
             ))}
           </div>
         ) : (
-          <p className="rounded-2xl border border-edge bg-card p-8 text-center text-sm text-slate-500">
+          <p className="glass-panel p-8 text-center text-sm text-white/45">
             تعذّر تحميل آخر الحلقات حالياً، حاول مرة أخرى بعد قليل.
           </p>
         )}
@@ -119,36 +115,34 @@ export default async function HomePage() {
       <Section title="تصفّح حسب التصنيف" icon={<Flame className="h-4 w-4" />}>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {GENRES.map((g, i) => (
-            <a
+            <Link
               key={g}
               href={`/anime?genres=${encodeURIComponent(g)}`}
-              className="group flex items-center justify-between rounded-xl border border-edge bg-card px-4 py-3.5 text-sm font-medium text-slate-300 transition hover:border-primary/50 hover:text-white"
+              className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-sm font-medium text-white/70 backdrop-blur-xl transition hover:border-white/30 hover:bg-white/10 hover:text-white"
             >
               {g}
-              <span className="text-lg text-primary/60 transition group-hover:text-primary">
+              <span className="text-lg text-white/25 transition group-hover:text-white/70">
                 {i % 2 === 0 ? "✦" : "✧"}
               </span>
-            </a>
+            </Link>
           ))}
         </div>
       </Section>
 
-      <div className="mt-14 flex flex-col items-center gap-3 rounded-3xl border border-primary/20 bg-gradient-to-l from-primary/10 via-card to-accent/10 px-6 py-10 text-center">
-        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/30">
+      <div className="glass-panel relative mt-16 flex flex-col items-center gap-3 overflow-hidden px-6 py-12 text-center">
+        <div className="grid-veil" aria-hidden />
+        <span className="glass grid h-12 w-12 place-items-center rounded-2xl">
           <Tv className="h-6 w-6 text-white" />
         </span>
-        <h3 className="text-xl font-bold text-white">
+        <h3 className="relative text-xl font-bold text-white">
           متابعة يومية؟ كل شيء هنا في مكان واحد
         </h3>
-        <p className="max-w-md text-sm leading-7 text-slate-400">
+        <p className="relative max-w-md text-sm leading-7 text-white/50">
           تصفّح القائمة الكاملة، ابحث عن أنميك المفضل، وابدأ المشاهدة خلال ثوانٍ.
         </p>
-        <a
-          href="/anime"
-          className="mt-2 rounded-xl bg-gradient-to-l from-primary to-accent px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/30 transition hover:brightness-110"
-        >
+        <Link href="/anime" className="btn btn-lg btn-solid btn-sheen relative mt-2">
           استكشف المكتبة
-        </a>
+        </Link>
       </div>
     </div>
   );

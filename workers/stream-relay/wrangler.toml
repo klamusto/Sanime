@@ -1,0 +1,11 @@
+name = "sanime-stream-relay"
+main = "worker.js"
+compatibility_date = "2025-09-01"
+
+# Deploy:
+#   npx wrangler login
+#   npx wrangler secret put STREAM_SECRET   # نفس القيمة الموجودة في Vercel
+#   npx wrangler deploy
+#
+# ثم على Vercel:
+#   NEXT_PUBLIC_STREAM_RELAY = https://sanime-stream-relay.<اسمك>.workers.dev

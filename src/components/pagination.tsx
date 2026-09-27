@@ -22,7 +22,6 @@ export default function Pagination({
     router.push(`?${params.toString()}`, { scroll: true });
   }
 
-  // window of pages around current
   const pages: number[] = [];
   const start = Math.max(1, currentPage - 2);
   const end = Math.min(totalPages, currentPage + 2);
@@ -33,7 +32,7 @@ export default function Pagination({
       <button
         onClick={() => go(currentPage - 1)}
         disabled={currentPage <= 1}
-        className="flex h-10 w-10 items-center justify-center rounded-xl border border-edge text-slate-300 transition hover:border-primary/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+        className="btn btn-icon"
         aria-label="الصفحة السابقة"
       >
         <ChevronRight className="h-4 w-4" />
@@ -41,13 +40,10 @@ export default function Pagination({
 
       {start > 1 && (
         <>
-          <button
-            onClick={() => go(1)}
-            className="h-10 w-10 rounded-xl border border-edge text-sm text-slate-300 transition hover:border-primary/50 hover:text-white"
-          >
+          <button onClick={() => go(1)} className="btn btn-icon">
             {toArabicDigits(1)}
           </button>
-          {start > 2 && <span className="px-1 text-slate-600">…</span>}
+          {start > 2 && <span className="px-1 text-white/25">…</span>}
         </>
       )}
 
@@ -55,11 +51,8 @@ export default function Pagination({
         <button
           key={p}
           onClick={() => go(p)}
-          className={`h-10 w-10 rounded-xl border text-sm font-semibold transition ${
-            p === currentPage
-              ? "border-transparent bg-gradient-to-br from-primary to-accent text-white shadow-lg shadow-primary/30"
-              : "border-edge text-slate-300 hover:border-primary/50 hover:text-white"
-          }`}
+          className={`btn btn-icon ${p === currentPage ? "btn-solid" : ""}`}
+          aria-current={p === currentPage ? "page" : undefined}
         >
           {toArabicDigits(p)}
         </button>
@@ -67,11 +60,8 @@ export default function Pagination({
 
       {end < totalPages && (
         <>
-          {end < totalPages - 1 && <span className="px-1 text-slate-600">…</span>}
-          <button
-            onClick={() => go(totalPages)}
-            className="h-10 w-10 rounded-xl border border-edge text-sm text-slate-300 transition hover:border-primary/50 hover:text-white"
-          >
+          {end < totalPages - 1 && <span className="px-1 text-white/25">…</span>}
+          <button onClick={() => go(totalPages)} className="btn btn-icon">
             {toArabicDigits(totalPages)}
           </button>
         </>
@@ -80,7 +70,7 @@ export default function Pagination({
       <button
         onClick={() => go(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        className="flex h-10 w-10 items-center justify-center rounded-xl border border-edge text-slate-300 transition hover:border-primary/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+        className="btn btn-icon"
         aria-label="الصفحة التالية"
       >
         <ChevronLeft className="h-4 w-4" />
